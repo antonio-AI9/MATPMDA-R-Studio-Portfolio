@@ -14,7 +14,7 @@ mydata <- read.table("Smartwatch_Steps.txt", header=TRUE, sep='\t') #dataload
 
 # Introduction
 This portfolio analyses daily activity data collected from my smartwatch between 1st August and 21st August 2025. The data was automatically tracked by the device and exported into a text file, so it provides an accurate day-by-day record of my step counts. During this period, I was working full-time in Edinburgh, commuting, going to the gym and maintaining an active lifestyle over the summer and I wanted to analyse how different lifestyle factors, namely work location, day of the week and breakfast habit would relate to my physical activity. 
-By understanding this patters, I hope to make more informed decisions about maintaining an active lifestyle, even with a demanding schedule. In this portfolio I use visualisations, Student t test, linear regression, Fisher's exact test, Pearson's chi-squared test and Bayes's theorem, which follow the methods of this course.
+By understanding this patterns, I hope to make more informed decisions about maintaining an active lifestyle, even with a demanding schedule. In this portfolio I use visualisations, Student t test, linear regression, Fisher's exact test, Pearson's chi-squared test and Bayes's theorem, which follow the methods of this course.
 
 ```{r}
 head(mydata)
@@ -52,7 +52,7 @@ The plot above reveals that my daily activity usually falls between 5,000 and 15
 boxplot(Steps ~ Weekday, data = mydata, col="grey")
 ```
 
-This boxplot compares my daily steps between weekdays and weekends. Visually, my activity appears higher on weekends than weekdays, whith the medial steps greater for weekends. To explain, the non-weekday median sits roughly around 13,000-14,000 steps, while the weekend median is closer to about 9,500-10,000 steps. Personally, this is very surprising, as I expected to walk more during the working week due to commuting, structure routine and work. Instead, the plot suggests that on weekends I often reach higher step counts, perhaps because I have more time for social activities, longer walks and I run errands that keep me moving.
+This boxplot compares my daily steps between weekdays and weekends. Visually, my activity appears higher on weekends than weekdays, whith the median steps greater for weekends. To explain, the non-weekday median sits roughly around 13,000-14,000 steps, while the weekend median is closer to about 9,500-10,000 steps. Personally, this is very surprising, as I expected to walk more during the working week due to commuting, structure routine and work. Instead, the plot suggests that on weekends I often reach higher step counts, perhaps because I have more time for social activities, longer walks and I run errands that keep me moving.
 
 # The Student T Test
 
@@ -62,7 +62,7 @@ I want to find out if my average number of daily steps is higher on days when I 
 The mean number of steps on breakfast days is equal to the mean number of steps on non-breakfast days.
 
 ## Alternative Hypothesis 
-The mean number of steps on breafakst days is greater than the mean number of steps on non-breakfast days.
+The mean number of steps on breakfast days is greater than the mean number of steps on non-breakfast days.
 
 ## One Sided Test 
 I used a one-sided t-test because I expected that having breakfast would lead to a higher stepcount during that day.
@@ -173,8 +173,8 @@ Eating breakfast depends on whether it is a weekeday or weekend.
 I used a two-sided test as I had no prior assumption about the direction of association.
 
 ```{r}
-observed <- c(BreakfastYesWEND=3, BrekfastYesWDAY=7)
-expected <- c(BreakfastYesWEND=5, BreakfastYesWDAY=5)
+observed <- c(Weekend=3, Weekday=7)
+expected <- c(Weekend=5, Weekday=5)
 
 observed
 ```

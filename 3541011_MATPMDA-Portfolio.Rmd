@@ -159,6 +159,54 @@ fisher.test(mytab)
 The Fisher's exact test gives a p-value of about 0.0015 which is well below the common 0.05 threshold. This result is statistically significant so I can reject the null hypothesis. This conclusion is consistent with the contingency table: the cell for "Breakfast" = YES" and "WFH = Yes" is zero, meaning that in this dataset I've never had breakfast on days I worked from home, whereas I often had breakfast on office days. For my day-to-day life, this is surprising as I expected that being at home would make breakfast more likely, but instead the structure of office days seems to encourage me to eat breakfast before leaving the house.
 
 
+# Chi-Squared Test: Is Breakfast associated with Weekday or Weekend?
 
+I want to check if my breakfast habit depends on whether it is a weekday or weekend.
+
+## Null Hypothesis
+Breakfast is independent on whether it is a weekday or weekend.
+
+## Alternative Hypothesis 
+Eating breakfast depends on whether it is a weekeday or weekend.
+
+## Two sided Test 
+I used a two-sided test as I had no prior assumption about the direction of association.
+
+```{r}
+observed <- c(BreakfastYesWEND=3, BrekfastYesWDAY=7)
+expected <- c(BreakfastYesWEND=5, BreakfastYesWDAY=5)
+
+observed
+```
+
+```{r}
+expected
+```
+
+```{r}
+B <- sum((observed-expected)^2/expected)
+B
+```
+
+This gives a badness-of-fit value of B = 1.6, which is fairly small, indicating that my observed counts (3 weekend breakfasts and 7 weekday breakfasts) are quite close to the equal expectation of 5 and 5.
+
+```{r}
+x <- seq(from=0, to=12, len=1000)
+plot(x,dchisq(x,df=1), type='l', lwd=2, main="Pearson's chi square Test") #setup axes
+B <- 1.6 ##value of Badness from above
+abline(v=B) ##vertical line
+jj <- seq(from=B, to=12, len=100) ##temporary variable 
+polygon(c(jj,rev(jj)),c(jj*0,dchisq(rev(jj),df=1)),col='gray',border=NA) #shade pvalue 
+text(1.6,0.1,"observed B", pos=2)
+```
+
+```{r}
+pchisq(1.6,df=1,lower.tail = FALSE)
+```
+
+The p-value is 0.206, which is well above the standard threshold of 0.05. Therefore, I do not reject the null hypothesis. Statistically, there is no significant association between breakfast and the type of day in my routine. Any small differences observed can be random variations. It is interesting to see what my breakfast habits remain relatively steady across the week. Due to work, it appears that I often have breakfast on weekdays to maintain high energy levels and stay active. On weekends, probably due to social events, study schedules or convenience I tend to stick to similar habits and be more relaxed about my meal routine.
+
+
+# Bayes's Theorem 
 
 

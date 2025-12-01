@@ -495,8 +495,8 @@ step count that non-breakfast days.</p>
 <p>The slope of the regression is zero: there is no linear relationship
 between Date and Step.</p>
 </div>
-<div id="altenrative-hyphothesis" class="section level2">
-<h2>Altenrative Hyphothesis</h2>
+<div id="alternative-hyphothesis" class="section level2">
+<h2>Alternative Hyphothesis</h2>
 <p>The slope of the regression is not zero: my daily steps change
 linearly with the Date.</p>
 <pre class="r"><code>plot(Steps ~ Date, data = mydata,
@@ -544,6 +544,66 @@ any gradual trend overtime.</p>
 </div>
 <div id="fishers-exact-test-is-brekfast-linked-with-wfh" class="section level1">
 <h1>Fisher’s Exact Test: Is Brekfast linked with WFH?</h1>
+<p>I would like to know if my breakfast habit is associated with
+WFH.</p>
+<div id="null-hypothesis-2" class="section level2">
+<h2>Null Hypothesis</h2>
+<p>In my daily routine having breakfast is independent of working from
+home</p>
+</div>
+<div id="altenative-hypothesis" class="section level2">
+<h2>Altenative Hypothesis</h2>
+<p>In my daily routine having breakfast depends on whether I am working
+from home.</p>
+</div>
+<div id="two-sided-test" class="section level2">
+<h2>Two Sided Test</h2>
+<p>I used a two sided test because I had no prior assumption about
+whether breakfast would be more or less common on WFH days.</p>
+<p>To start my analysis, I summarise my data in a 2X2 table and display
+it:</p>
+<pre class="r"><code>mytab &lt;- matrix (c(3,6,
+                   12,0), 2,2, byrow = TRUE) ##define matrix
+
+dimnames(mytab) &lt;- list(
+  Breakfast = c(&quot;No&quot;, &quot;Yes&quot;),
+  WFH =c(&quot;No&quot;, &quot;Yes&quot;)
+)
+
+mytab  ##display</code></pre>
+<pre><code>##          WFH
+## Breakfast No Yes
+##       No   3   6
+##       Yes 12   0</code></pre>
+<p>This table shows how often each combination of breakfast and WFH
+happened. On 6 days I worked from home and did not have breakfast and on
+12 days I went to the office and did have breakfast. There were 3 days
+with neither breakfast nor WFH and 0 days where I both worked from home
+and had breakfast. So, in this period I have never eaten breakfast on a
+WFH day and all my breakfasts happened on office days.</p>
+<pre class="r"><code>fisher.test(mytab)</code></pre>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  mytab
+## p-value = 0.001548
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.0000000 0.3827081
+## sample estimates:
+## odds ratio 
+##          0</code></pre>
+<p>The Fisher’s exact test gives a p-value of about 0.0015 which is well
+below the common 0.05 threshold. This result is statistically
+significant so I can reject the null hypothesis. This conclusion is
+consistent with the contingency table: the cell for “Breakfast” = YES”
+and “WFH = Yes” is zero, meaning that in this dataset I’ve never had
+breakfast on days I worked from home, whereas I often had breakfast on
+office days. For my day-to-day life, this is surprising as I expected
+that being at home would make breakfast more likely, but instead the
+structure of office days seems to encourage me to eat breakfast before
+leaving the house.</p>
+</div>
 </div>
 
 

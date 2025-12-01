@@ -52,6 +52,113 @@ The plot above reveals that my daily activity usually falls between 5,000 and 15
 boxplot(Steps ~ Weekday, data = mydata, col="grey")
 ```
 
-This boxplot compares my daily steps between weekdays and weekends.
+This boxplot compares my daily steps between weekdays and weekends. Visually, my activity appears higher on weekends than weekdays, whith the medial steps greater for weekends. To explain, the non-weekday median sits roughly around 13,000-14,000 steps, while the weekend median is closer to about 9,500-10,000 steps. Personally, this is very surprising, as I expected to walk more during the working week due to commuting, structure routine and work. Instead, the plot suggests that on weekends I often reach higher step counts, perhaps because I have more time for social activities, longer walks and I run errands that keep me moving.
+
+# The Student T Test
+
+I want to find out if my average number of daily steps is higher on days when I have breakfast compared to days when I do not have it.
+
+## Null Hypothesis
+The mean number of steps on breakfast days is equal to the mean number of steps on non-breakfast days.
+
+## Alternative Hypothesis 
+The mean number of steps on breafakst days is greater than the mean number of steps on non-breakfast days.
+
+## One Sided Test 
+I used a one-sided t-test because I expected that having breakfast would lead to a higher stepcount during that day.
+
+```{r}
+steps_breakfast <- mydata$Steps[mydata$Breakfast == "Y"]
+steps_no_breakfast <- mydata$Steps[mydata$Breakfast == "N"]
+```
+
+Sample means for steps on breakfast days
+```{r}
+mean(steps_breakfast)
+```
+
+Sample mean for steps on non-breakfast days
+```{r}
+mean(steps_no_breakfast)
+```
+
+```{r}
+mean(steps_breakfast) - mean(steps_no_breakfast)
+```
+```{r}
+t.test(steps_breakfast, steps_no_breakfast, alternative = "greater")
+```
+
+I ran a one-sided test to check if my avarage daily steps are higher on days when I have breakfast than on days when I skip it. The null hypothesis was that that the man number of steps is the same for breakfast and non-breakfast days and the  alternative hypothesis was that the mean on breakfast is greater.
+The same means support this idea: on breakfast days I walked about 14,078 steps on average, compare with about 7,668 steps on non-breakfast days, a difference of roughly 6,409 steps. 
+The T Test gave me a p-value of 0.000143m which is far below the 0.05 significance threshold, so I reject the null hypothesis. The 95% confidence interval from about 3,936 means that any hypothesis claiming a smaller or negative difference would be rejected and I can be reasonably confident (at 95% level) that breakfast days do have a higher step count that non-breakfast days.
+
+
+# Linear Regression 
+
+I want to check if my daily step count shows a linear trend over the 21 days.
+
+## Null hypothesis
+The slope of the regression is zero: there is no linear relationship between Date and Step.
+
+## Alternative Hyphothesis
+The slope of the regression is not zero: my daily steps change linearly with the Date.
+
+```{r}
+plot(Steps ~ Date, data = mydata,
+     main = "Steps as a function of day",
+     xlab = "Day of study (1-21)",
+     ylab = "Steps")
+
+abline(lm(Steps ~ Date, data = mydata)) ##regression line
+```
+
+The scatterplot above shows my daily step count plotted against the days of the study, with a fitted regression line added. This lets me see if there is an overall upward or downward linear trend in steps across the 21 days analysed.
+
+```{r}
+model <- lm(Steps ~ Date, data = mydata)
+summary(model)
+```
+
+This regression model shows how my daily steps changed over the 21 days. The fitted line has an intercept of about 10,730 steps and a slope of about 55 steps per day, so it suggests that only a tiny increase of roughly 55 extra steps as each day goes by. This change is negligible compared with my usual range of 5,000-20,000 steps and a p-value of 0.757, which is far above 0.05 so there is no statistical evidence that my walking increased or decreased in a linear way over time. Overall, this indicates that my step counts are more strongly influenced by what happens on certain days (social, commuting, WFH, office day) rather than any gradual trend overtime.
+
+
+# Fisher's Exact Test: Is Brekfast linked with WFH?
+
+I would like to know if my breakfast habit is associated with WFH.
+
+## Null Hypothesis
+In my daily routine having breakfast is independent of working from home
+
+## Altenative Hypothesis
+In my daily routine having breakfast depends on whether I am working from home.
+
+## Two Sided Test
+I used a two sided test because I had no prior assumption about whether breakfast would be more or less common on WFH days. 
+
+To start my analysis, I summarise my data in a 2X2 table and display it:
+
+```{r}
+mytab <- matrix (c(3,6,
+                   12,0), 2,2, byrow = TRUE) ##define matrix
+
+dimnames(mytab) <- list(
+  Breakfast = c("No", "Yes"),
+  WFH =c("No", "Yes")
+)
+
+mytab  ##display
+```
+
+This table shows how often each combination of breakfast and WFH happened. On 6 days I worked from home and did not have breakfast and on 12 days I went to the office and did have breakfast. There were 3 days with neither breakfast nor WFH and 0 days where I both worked from home and had breakfast. So, in this period I have never eaten breakfast on a WFH day and all my breakfasts happened on office days.
+
+```{r}
+fisher.test(mytab)
+```
+
+The Fisher's exact test gives a p-value of about 0.0015 which is well below the common 0.05 threshold. This result is statistically significant so I can reject the null hypothesis. This conclusion is consistent with the contingency table: the cell for "Breakfast" = YES" and "WFH = Yes" is zero, meaning that in this dataset I've never had breakfast on days I worked from home, whereas I often had breakfast on office days. For my day-to-day life, this is surprising as I expected that being at home would make breakfast more likely, but instead the structure of office days seems to encourage me to eat breakfast before leaving the house.
+
+
+
 
 

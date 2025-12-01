@@ -1,0 +1,57 @@
+---
+title: "3541011_MATPMDA-Portfolio"
+output: html_document
+date: "2025-12-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+mydata <- read.table("Smartwatch_Steps.txt", header=TRUE, sep='\t') #dataload
+```
+
+# Introduction
+This portfolio analyses daily activity data collected from my smartwatch between 1st August and 21st August 2025. The data was automatically tracked by the device and exported into a text file, so it provides an accurate day-by-day record of my step counts. During this period, I was working full-time in Edinburgh, commuting, going to the gym and maintaining an active lifestyle over the summer and I wanted to analyse how different lifestyle factors, namely work location, day of the week and breakfast habit would relate to my physical activity. 
+By understanding this patters, I hope to make more informed decisions about maintaining an active lifestyle, even with a demanding schedule. In this portfolio I use visualisations, Student t test, linear regression, Fisher's exact test, Pearson's chi-squared test and Bayes's theorem, which follow the methods of this course.
+
+```{r}
+head(mydata)
+```
+
+The dataset shown above contains daily activity records collected from my smartwatch. The columns include:
+* Data: Sequential number for each day for this study period (1-21st August 2025)
+* Steps: Total number of daily steps 
+* Weekday/Weekend: Indicates whether the day was a Weekday ("Y") or a Weekend ("Y")
+* WFH/Office: Specifies if I went to the office ("Y") or worked from home ("Y")
+* Breakfast: Records if I had breakfast or not that day
+
+```{r}
+summary(mydata$Steps)
+```
+
+On average, I take about 11,000 steps per day, with most days ranging from 7,000 to 15,000 steps. The median and mean are very close, which illustrate that the distribution is not heavily skewed, although a few very active days pull the mean upward. This patter helps justify the below histogram plotted to visualise the distribution of steps and provides a foundation of comparisons analysed later in this report.
+
+# Methods and Results
+
+## Distribution of Steps - Histogram
+
+I want to create a histogram to show how the distribution of my daily steps counts.
+
+
+```{r}
+hist(mydata$Steps, col="lightblue", main= "Histogram of my daily steps")
+```
+
+The plot above reveals that my daily activity usually falls between 5,000 and 15,000 steps, with a few days where I walk over the 20,000 threshold. Most days are in the lower and middle step ranges, which is shown by the higher bars in the bins. I chose a histogram because it clearly shows the spread and frequency of my activity levels. This makes it easy to see how often I reach my target of 10,000 steps. As a guideline, this level is actually recommended by the NHS in the UK to maintain a good daily activity and fitness levels, which sits near the center of my distribution. In fact, the above image clearly shows how often I hit this target.
+
+## Steps by Day Type: Weekday vs Weekend - Boxplot
+
+```{r}
+boxplot(Steps ~ Weekday, data = mydata, col="grey")
+```
+
+This boxplot compares my daily steps between weekdays and weekends.
+
+

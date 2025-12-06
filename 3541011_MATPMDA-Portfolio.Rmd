@@ -1,7 +1,6 @@
 ---
 title: "3541011_MATPMDA-Portfolio"
 output: html_document
-date: "2025-12-01"
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +22,7 @@ head(mydata)
 The dataset shown above contains daily activity records collected from my smartwatch. The columns include:
 * Data: Sequential number for each day for this study period (1-21st August 2025)
 * Steps: Total number of daily steps 
-* Weekday/Weekend: Indicates whether the day was a Weekday ("Y") or a Weekend ("Y")
+* Weekday: Indicates whether the day was a Weekday ("Y") or not
 * WFH/Office: Specifies if I went to the office ("Y") or worked from home ("Y")
 * Breakfast: Records if I had breakfast or not that day
 
@@ -91,7 +90,7 @@ t.test(steps_breakfast, steps_no_breakfast, alternative = "greater")
 
 I ran a one-sided test to check if my avarage daily steps are higher on days when I have breakfast than on days when I skip it. The null hypothesis was that that the man number of steps is the same for breakfast and non-breakfast days and the  alternative hypothesis was that the mean on breakfast is greater.
 The same means support this idea: on breakfast days I walked about 14,078 steps on average, compare with about 7,668 steps on non-breakfast days, a difference of roughly 6,409 steps. 
-The T Test gave me a p-value of 0.000143m which is far below the 0.05 significance threshold, so I reject the null hypothesis. The 95% confidence interval from about 3,936 means that any hypothesis claiming a smaller or negative difference would be rejected and I can be reasonably confident (at 95% level) that breakfast days do have a higher step count that non-breakfast days.
+The T Test gave me a p-value of 0.000143m which ixs far below the 0.05 significance threshold, so I REJECT the null hypothesis. The 95% confidence interval from about 3,936 means that any hypothesis claiming a smaller or negative difference would be rejected and I can be reasonably confident (at 95% level) that breakfast days do have a higher step count that non-breakfast days.
 
 
 # Linear Regression 
@@ -136,6 +135,7 @@ In my daily routine having breakfast depends on whether I am working from home.
 ## Two Sided Test
 I used a two sided test because I had no prior assumption about whether breakfast would be more or less common on WFH days. 
 
+
 To start my analysis, I summarise my data in a 2X2 table and display it:
 
 ```{r}
@@ -143,8 +143,8 @@ mytab <- matrix (c(3,6,
                    12,0), 2,2, byrow = TRUE) ##define matrix
 
 dimnames(mytab) <- list(
-  Breakfast = c("No", "Yes"),
-  WFH =c("No", "Yes")
+  WFH =c("No", "Yes"),
+  Breakfast = c("No", "Yes")
 )
 
 mytab  ##display
@@ -156,30 +156,29 @@ This table shows how often each combination of breakfast and WFH happened. On 6 
 fisher.test(mytab)
 ```
 
-The Fisher's exact test gives a p-value of about 0.0015 which is well below the common 0.05 threshold. This result is statistically significant so I can reject the null hypothesis. This conclusion is consistent with the contingency table: the cell for "Breakfast" = YES" and "WFH = Yes" is zero, meaning that in this dataset I've never had breakfast on days I worked from home, whereas I often had breakfast on office days. For my day-to-day life, this is surprising as I expected that being at home would make breakfast more likely, but instead the structure of office days seems to encourage me to eat breakfast before leaving the house.
+The Fisher's exact test gives a p-value of about 0.0015 which is well below the common 0.05 threshold. This result is statistically SIGNIFICANT so I can reject the null hypothesis. This conclusion is consistent with the contingency table: the cell for "Breakfast" = YES" and "WFH = Yes" is zero, meaning that in this dataset I've never had breakfast on days I worked from home, whereas I often had breakfast on office days. For my day-to-day life, this is surprising as I expected that being at home would make breakfast more likely, but instead the structure of office days seems to encourage me to eat breakfast before leaving the house.
 
 
-# Chi-Squared Test: Is Breakfast associated with Weekday or Weekend?
 
-I want to check if my breakfast habit depends on whether it is a weekday or weekend.
+# Chi-Squared Test: When I have breakfast, are cereal, fruit, toast and yoghurt equally likely?
+
+I want to find out if, on days when I do have breakfast, all your breakfast types listes are equally likely or if I tend to favour some kinds over the others.
 
 ## Null Hypothesis
-Breakfast is independent on whether it is a weekday or weekend.
+When I have breakfast, all types (Cereal, Toast, Yoghurt and Fruit) are equally likely.
 
 ## Alternative Hypothesis 
-Eating breakfast depends on whether it is a weekeday or weekend.
+When I have breakfast, at least one type had a different probabily of being a preffered choice - so the distribution is not 1:1:1:1.
 
 ## Two sided Test 
-I used a two-sided test as I had no prior assumption about the direction of association.
+I used a two-sided test because I had no prior assumption about which breakfast kind would be more or less popular. 
+
 
 ```{r}
-observed <- c(Weekend=3, Weekday=7)
-expected <- c(Weekend=5, Weekday=5)
+observed <- c(Ceral = 1, Toast = 3, Fruit =3, Yoghurt =0)
+expected <- c(Ceral = 1.75, Toast = 1.75, Fruit =1.75, Yoghurt =1.75)
 
 observed
-```
-
-```{r}
 expected
 ```
 
@@ -188,25 +187,30 @@ B <- sum((observed-expected)^2/expected)
 B
 ```
 
-This gives a badness-of-fit value of B = 1.6, which is fairly small, indicating that my observed counts (3 weekend breakfasts and 7 weekday breakfasts) are quite close to the equal expectation of 5 and 5.
+This gives a badness-of-fit value of B = 3.86, which is small. This indicates that my observed breakfast counts (1 cereal, 3 toast, 3 fruit, 0 yogurt) are very close to what I would expect if all four kinds of breakfast were equally likely (1.75 each).
 
 ```{r}
 x <- seq(from=0, to=12, len=1000)
-plot(x,dchisq(x,df=1), type='l', lwd=2, main="Pearson's chi square Test") #setup axes
-B <- 1.6 ##value of Badness from above
+plot(x,dchisq(x,df=3), type='l', lwd=2, main="Pearson's chi square Test") #setup axes
+B <- 3.857143 ##value of Badness from above
 abline(v=B) ##vertical line
 jj <- seq(from=B, to=12, len=100) ##temporary variable 
-polygon(c(jj,rev(jj)),c(jj*0,dchisq(rev(jj),df=1)),col='gray',border=NA) #shade pvalue 
-text(1.6,0.1,"observed B", pos=2)
+polygon(c(jj,rev(jj)),c(jj*0,dchisq(rev(jj),df=3)),col='gray',border=NA) #shade pvalue 
+text(B,0.1,"observed B", pos=2)
 ```
 
 ```{r}
-pchisq(1.6,df=1,lower.tail = FALSE)
+pchisq(3.857143,df=3,lower.tail = FALSE)
 ```
 
-The p-value is 0.206, which is well above the standard threshold of 0.05. Therefore, I do not reject the null hypothesis. Statistically, there is no significant association between breakfast and the type of day in my routine. Any small differences observed can be random variations. It is interesting to see what my breakfast habits remain relatively steady across the week. Due to work, it appears that I often have breakfast on weekdays to maintain high energy levels and stay active. On weekends, probably due to social events, study schedules or convenience I tend to stick to similar habits and be more relaxed about my meal routine.
+The p-value is 0.28, which is well above the usual 0.05 threshold. Hence, I do no reject the null that all your breakfast types are equally likely when I have breakfast. Statistically, the result is NOT SIGNIFICANT so any apparent preference could be due to random variation in this short 21-day period, so further data and exploration is recommended.
 
 
-# Bayes's Theorem 
 
+# Conclusion 
+This portfolio showed how basic statistic tools can help me understand a small but meaningful part of my daily life. By looking at 21 days of my smart watch data, I learned that having breakfast is strongly associated to my physical activity : the t-test suggested that breakfast days are linked with a higher step counts that non-breakfast days. Conversely, the linear regression indicated no clear trend in my steps over time. 
+
+The contingency table analysis used to look at Fisher's exact test revealed a surprising association between breakfast and working from home: I have never had breakfast on WFH days, while I often had food before leaving the house on office days. This goes against my initial thought that being in the comfort of my house and sleeping for a bit longer due to the lack of commute would encourage me to have breakfast in the morning. Finally, the chi-squared test illustrated that when I have breakfast, my choice between toast, cereal, yogurt and fruit is generally consistent with all being equally likely: there is no statistical evidence for a particular type of breakfast, though the dataset is small.
+
+To sum up, working with box plots, histograms and hypothesis tests as well as regressions has helped me to see my own behavior more objectively. The analysis noted aspects of my life where the evidence is strong (impact of breakfast on my step count and link between breakfast and WFH) but also where the data is too limited to draw firm conclusions (breakfast preferences). 
 
